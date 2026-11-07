@@ -26,3 +26,6 @@ I problemi di qualità o interpretazione dei dati senza impatto di sicurezza
 vanno segnalati con una issue ordinaria, allegando la fonte ufficiale, oppure
 con il pulsante «Segnala un problema» del sito, che crea la stessa issue
 pubblica. Quel modulo non è un canale riservato: non usarlo per vulnerabilità.
+
+Il modello delle minacce usato per valutare e prioritizzare i finding è in
+[SECURITY_MODEL.md](SECURITY_MODEL.md).
