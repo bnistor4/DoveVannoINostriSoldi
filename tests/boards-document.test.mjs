@@ -146,3 +146,33 @@ test("assertBoardDocument accepts free layout, notes, headings, links and colors
     /frame obbligatorio/,
   );
 });
+
+test("assertBoardDocument sanitizes heading and note HTML but keeps plain text", () => {
+  const doc = assertBoardDocument({
+    schemaVersion: 1,
+    title: "Studio",
+    layout: "grid",
+    tiles: [
+      {
+        id: "n1",
+        kind: "note",
+        body: "<p>&lt;img src=x onerror=alert(1)&gt;</p>",
+      },
+      {
+        id: "h1",
+        kind: "heading",
+        title: "Titolo",
+        body: '<p style="color:red&quot; onmouseover=&quot;x">Testo</p>',
+      },
+      {
+        id: "n2",
+        kind: "note",
+        body: "Nota per la redazione.",
+      },
+    ],
+  });
+
+  assert.doesNotMatch(doc.tiles[0].body ?? "", /<img/i);
+  assert.doesNotMatch(doc.tiles[1].body ?? "", /\sonmouseover=/i);
+  assert.equal(doc.tiles[2].body, "Nota per la redazione.");
+});

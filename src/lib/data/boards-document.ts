@@ -4,6 +4,8 @@
  * Spec: docs/DVNS_BOARDS.md
  */
 
+import { sanitizeBoardHtml } from "@/lib/boards/board-html";
+
 export const BOARDS_DOCUMENT_SCHEMA_VERSION = 1 as const;
 
 export const BOARD_TILE_VIEWS = ["kpi", "table", "line", "bar"] as const;
@@ -109,6 +111,10 @@ function optionalText(value: unknown, path: string, max = 500): string | undefin
     throw new Error(`BoardDocument: ${path} troppo lungo (max ${max})`);
   }
   return out;
+}
+
+function sanitizeStoredBody(body: string): string {
+  return /<[a-z][\s\S]*>/iu.test(body) ? sanitizeBoardHtml(body) : body;
 }
 
 function assertHttpsUrl(value: unknown, path: string): string {
@@ -226,7 +232,7 @@ function assertTile(value: unknown, path: string): BoardTile {
       if (value.body.length > 8_000) {
         throw new Error(`BoardDocument: ${path}.body troppo lungo (max 8000)`);
       }
-      tile.body = value.body;
+      tile.body = sanitizeStoredBody(value.body);
     }
     return tile;
   }
@@ -239,7 +245,7 @@ function assertTile(value: unknown, path: string): BoardTile {
     if (body.length > 8_000) {
       throw new Error(`BoardDocument: ${path}.body troppo lungo (max 8000)`);
     }
-    tile.body = body;
+    tile.body = sanitizeStoredBody(body);
     return tile;
   }
 
